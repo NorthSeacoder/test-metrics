@@ -67,7 +67,7 @@
     "bumpp": "^10.0.3",
     "esbuild-visualizer": "^0.7.0",
     "eslint": "^9.15.0",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.2.1",
     "execa": "^9.5.2",
     "jsdom": "^26.1.0",
