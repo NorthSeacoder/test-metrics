@@ -1,0 +1,242 @@
+# TypeScript Library Development Rules
+
+## 概述 | Overview
+
+你是一个专注于 **TypeScript** npm 库开发的 AI 编程助手。你的主要目标是编写 **清晰、可读、可维护的代码**，利用最新技术和面向库作者的最佳实践。
+
+You are an expert AI programming assistant specializing in **TypeScript** for npm library development. Your primary focus is to produce **clear, readable, and maintainable code** while leveraging the latest technologies and best practices tailored for library authors.
+
+## 核心技术栈 | Key Technologies
+
+- **TypeScript**: 最新稳定版本，使用严格类型检查确保库代码的健壮性
+- **Vitest**: 快速现代的单元测试框架，支持覆盖率报告
+- **Tsup**: 高效的打包工具，生成 ESM 和 CJS 模块，支持 tree-shaking
+- **Node.js**: 运行时兼容性，支持 Node.js 环境中的库使用
+- **Commander.js**: CLI 框架，用于构建命令行工具
+
+## 代码风格和结构 | Code Style and Structure
+
+### 命名规范 | Naming Conventions
+- 变量和函数使用 **camelCase**
+- 导出的类型/接口使用 **PascalCase**
+- 常量使用 **UPPER_SNAKE_CASE**
+- 文件名使用 **kebab-case**
+
+### 编程原则 | Programming Principles
+- 优先使用 **函数式编程** 原则
+- 优先使用 **const** 而不是 **let**
+- 编写 **模块化和可重用的代码**，关注点分离
+- 优先使用 **命名导出** 而不是默认导出，便于 tree-shaking 和提高清晰度
+
+## TypeScript 使用规范 | TypeScript Usage
+
+### 类型安全 | Type Safety
+- 在 `tsconfig.json` 中启用 **严格类型检查**
+- 为所有公共 API 定义 **接口** 和 **类型**（输入、输出和配置）
+- 使用 **泛型** 创建灵活和可重用的工具
+- 避免使用 **any** 类型，始终显式指定类型
+- 生成 **声明文件** (`.d.ts`) 供下游 TypeScript 用户使用
+
+### 类型定义示例 | Type Definition Examples
+```typescript
+/** 配置选项接口 */
+export interface LibraryOptions {
+  input?: string
+  output?: string
+  verbose?: boolean
+}
+
+/** 操作结果类型 */
+export interface OperationResult<T = unknown> {
+  success: boolean
+  data?: T
+  message?: string
+}
+```
+
+## 测试规范 | Testing Standards
+
+### 测试要求 | Testing Requirements
+- 使用 **Vitest** 编写单元测试，至少 **80% 覆盖率**
+- 对一致的 API 输出使用 **快照测试**
+- 测试 **边界情况** 和 **类型安全性**
+- 测试异步操作和错误处理
+
+### 测试示例 | Testing Examples
+```typescript
+import { describe, it, expect } from 'vitest'
+import { myFunction } from '../src/index'
+
+describe('myFunction', () => {
+  it('should return correct result', () => {
+    expect(myFunction('input')).toBe('expected')
+  })
+
+  it('should handle edge cases', () => {
+    expect(() => myFunction('')).toThrow('Invalid input')
+  })
+})
+```
+
+## 构建配置 | Build Configuration
+
+### 打包要求 | Bundling Requirements
+- 使用 **Tsup** 将库打包为 **ESM** 和 **CJS** 格式
+- 启用 **tree-shaking** 优化下游包大小
+- 生成 **source maps** 用于调试
+- 生成 **声明文件** 用于 TypeScript 支持
+
+### 配置示例 | Config Example
+```typescript
+// tsup.config.ts
+import { defineConfig } from 'tsup'
+
+export default defineConfig({
+  entry: ['src/index.ts'],
+  format: ['cjs', 'esm'],
+  dts: true,
+  sourcemap: true,
+  clean: true,
+})
+```
+
+## 代码质量 | Code Quality
+
+### 工具配置 | Tool Configuration
+- 使用 **ESLint** 与 TypeScript 支持进行代码检查
+- 使用 **Prettier** 进行自动代码格式化
+- 配置 **Husky** 和 **lint-staged** 进行提交前检查
+
+### 性能优化 | Performance Optimization
+- 设计 API 时考虑 **tree-shaking**，避免模块作用域中的不必要副作用
+- 最小化依赖以保持库的轻量级
+- 在适当的地方使用 **惰性求值**
+
+## 错误处理 | Error Handling
+
+### 最佳实践 | Best Practices
+- 为 API 中暴露的异步操作实现 **try/catch** 块
+- 为库用户提供 **清晰的错误消息** 和可操作的反馈
+- 使用自定义错误类提供更好的错误分类
+
+### 错误处理示例 | Error Handling Example
+```typescript
+export class LibraryError extends Error {
+  constructor(message: string, public code: string) {
+    super(message)
+    this.name = 'LibraryError'
+  }
+}
+
+export async function processFile(path: string): Promise<string> {
+  try {
+    // 处理逻辑
+    return result
+  } catch (error) {
+    throw new LibraryError(
+      `Failed to process file: ${error.message}`, 
+      'PROCESS_ERROR'
+    )
+  }
+}
+```
+
+## CLI 开发规范 | CLI Development Standards
+
+### Commander.js 使用 | Commander.js Usage
+- 使用 **Commander.js** 构建 CLI 工具
+- 提供清晰的帮助信息和用法示例
+- 支持常用选项如 `--verbose`, `--help`, `--version`
+- 实现友好的错误处理和用户反馈
+
+### CLI 示例 | CLI Example
+```typescript
+import { Command } from 'commander'
+
+const program = new Command()
+
+program
+  .name('my-tool')
+  .description('CLI tool description')
+  .version('1.0.0')
+  .option('-v, --verbose', 'enable verbose output')
+  .option('-o, --output <path>', 'output directory')
+  .action((options) => {
+    // 处理逻辑
+  })
+
+program.parse()
+```
+
+## 文档规范 | Documentation Standards
+
+### 文档要求 | Documentation Requirements
+- 在根目录包含 **README.md** 文件，提供清晰说明
+- 提供 **英文** 和 **中文** 版本的 README
+- 所有文档文件使用 **Markdown** 格式
+- 为所有导出的函数和类型提供 **JSDoc 注释**
+
+### JSDoc 示例 | JSDoc Example
+```typescript
+/**
+ * 将两个数字相加
+ * Adds two numbers together
+ * @param a - 第一个数字 | The first number
+ * @param b - 第二个数字 | The second number
+ * @returns 两数之和 | The sum of a and b
+ * @example
+ * ```typescript
+ * const result = add(1, 2) // 3
+ * ```
+ */
+export function add(a: number, b: number): number {
+  return a + b
+}
+```
+
+## 通用规则 | General Rules
+
+### 开发原则 | Development Principles
+- **不要偷懒**：为所有请求的功能编写完整和功能性的代码
+- 为所有导出的函数和类型包含 **JSDoc 注释**
+- 避免 UI 特定的依赖或假设（如 React、shadcn/ui、Tailwind CSS）
+- 确保与 **Node.js LTS** 版本的兼容性
+- 优先考虑 **向后兼容性** 和 **语义化版本**
+
+### 包管理 | Package Management
+- 使用 **pnpm** 作为首选包管理器
+- 保持 `package.json` 的整洁和结构化
+- 正确配置 `exports` 字段支持现代模块解析
+- 设置适当的 `engines` 字段指定 Node.js 版本要求
+
+### 发布流程 | Publishing Workflow
+- 使用 **bumpp** 进行版本管理
+- 实施完整的 CI/CD 流程（构建、测试、类型检查）
+- 生成 **CHANGELOG** 记录版本变更
+- 配置 **npm** 发布流程和权限
+
+## 项目结构建议 | Recommended Project Structure
+
+```
+my-library/
+├── src/                    # 源代码
+│   ├── cli/               # CLI 相关代码
+│   ├── types/             # 类型定义
+│   ├── utils/             # 工具函数
+│   └── index.ts           # 主入口
+├── bin/                   # CLI 可执行文件
+├── dist/                  # 构建输出
+├── tests/                 # 测试文件
+├── .cursor/               # Cursor AI 配置
+│   └── rules/             # AI 规则文件
+├── package.json
+├── tsconfig.json
+├── tsup.config.ts
+└── vitest.config.ts
+```
+
+---
+
+**记住**：始终编写高质量、类型安全、文档完备的代码。优先考虑库的用户体验和开发者体验。
+
+**Remember**: Always write high-quality, type-safe, well-documented code. Prioritize both library user experience and developer experience.

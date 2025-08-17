@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    /* 基础选项 */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+
+    /* 严格性 */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "useUnknownInCatchVariables": true,
+
+    /* 模块系统 */
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "lib": ["es2022", "dom"],
+    "types": ["node", "vitest/globals"],
+
+    /* 输出控制 */
+    "noEmit": true,
+    "forceConsistentCasingInFileNames": true,
+    "removeComments": false,
+    "declaration": true,
+    "declarationMap": true,
+
+    /* 路径映射 */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/types": ["src/types"],
+      "@/utils": ["src/utils"],
+      "@/cli": ["src/cli"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "coverage", "**/*.test.ts", "**/*.spec.ts"]
+}

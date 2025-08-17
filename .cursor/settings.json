@@ -1,0 +1,17 @@
+{
+  "cursor.general.enableMcp": true,
+  "cursor.cpp.disabledLanguageServices": [],
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.format.semicolons": "remove",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.DS_Store": true,
+    "**/coverage": true
+  }
+}

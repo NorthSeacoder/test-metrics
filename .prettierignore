@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+coverage/
+*.min.js
+*.min.css
+
+# Generated files
+CHANGELOG.md
+.changeset/
+
+# Config files that should not be formatted
+.env
+.env.*
+
+# Documentation that should preserve formatting
+LICENSE
+
+# Ignore specific file patterns
+**/*.md.bak
+**/*.json.bak
